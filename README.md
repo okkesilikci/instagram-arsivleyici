@@ -1,31 +1,32 @@
 # Instagram Arşivleyici
 
-Instagram fotoğraflarını kronolojik olarak düzenlemek ve seçilenleri ZIP olarak indirmek için tarayıcı tabanlı bir araç.
+Mac üzerinde yerel çalışan, herkese açık Instagram profillerindeki fotoğrafları listeleyip seçilenleri ZIP olarak indirmeyi deneyen uygulama.
 
-## İlk sürüm
+## Mac'te başlatma
 
-- Birden fazla fotoğrafı bilgisayardan içe aktarma
-- Fotoğrafları paylaşım tarihine göre sıralama
-- Tek tek veya toplu seçim
-- Dosya adlandırma: `AA_YYYY_NNN.ext` (ör. `11_2026_001.jpg`)
-- Seçilen fotoğrafları tek ZIP dosyasında indirme
-- Görseller tarayıcıda işlenir; uygulamaya yüklenmez
+1. Bu repository'yi bilgisayarına ZIP olarak indir ve klasörü aç.
+2. `Baslat.command` dosyasına çift tıkla. macOS güvenlik uyarısı verirse dosyaya sağ tıklayıp Aç'ı seç.
+3. İlk çalıştırmada gerekli Python paketleri kurulur ve tarayıcıda `http://127.0.0.1:5050` açılır.
+4. Instagram profil adresini gir, fotoğrafları listele, seç ve ZIP indir.
 
-## Çalıştırma
+Alternatif olarak Terminal'de:
 
-`index.html` dosyasını tarayıcıda açman yeterli. ZIP oluşturma için JSZip CDN üzerinden yüklenir; internet bağlantısı gerekir.
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python app.py
+```
 
-## Instagram erişimi hakkında
+## Özellikler
 
-Profil URL alanı bu ilk prototipte yalnızca arşiv etiketi olarak tutulur; Instagram'dan otomatik gönderi çekmez. Instagram, üçüncü taraf uygulamalara herkese açık herhangi bir profilin tüm gönderilerini topluca listeleyip indirmek için garantili genel bir API sunmaz. Giriş duvarlarını, erişim kontrollerini veya hız sınırlarını aşan yöntemler kullanılmaz.
+- Açık profil gönderilerini listelemeyi dener.
+- Fotoğraf carousel öğelerini ayrı gösterir; videoları atlar.
+- Tarihe göre sıralar, tek tek veya tümünü seçtirir.
+- ZIP dosya adlarını ay-yıl-sıra biçiminde oluşturur: `11_2026_001.jpg`.
 
-Otomatik içe aktarma daha sonra yalnızca platformun izin verdiği bir API/entegrasyon veya kullanıcının yetkili olarak dışa aktardığı içerik üzerinden eklenebilir.
+## Sınırlamalar
 
-## Kullanım
+Instagram üçüncü taraf erişimini değiştirebilir, istekleri sınırlayabilir veya bazı/eski gönderileri döndürmeyebilir. Tüm gönderilerin alınması garanti edilemez. Uygulama Instagram şifresi istemez ve giriş duvarlarını aşmaya çalışmaz. İçerikleri yalnızca indirme ve kullanma iznin olan hesaplarda kullan.
 
-1. `index.html` dosyasını aç.
-2. Fotoğrafları seç.
-3. Her fotoğrafın paylaşım tarihini gir.
-4. İstediğin fotoğrafları seç ve ZIP indir.
-
-Dosyalar tarih sırasına göre adlandırılır. Aynı ay içindeki sıra numaraları kronolojik sıraya göre verilir.
+Uygulama yalnızca bilgisayarındaki `127.0.0.1` adresinde dinler.
