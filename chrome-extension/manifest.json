@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "IG Arşivleyici",
+  "version": "0.1.0",
+  "description": "Açık Instagram profilinde tarayıcıda yüklenmiş fotoğrafları seçip arşivler.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://www.instagram.com/*",
+    "https://*.cdninstagram.com/*",
+    "https://*.fbcdn.net/*"
+  ],
+  "action": {
+    "default_title": "IG Arşivleyici",
+    "default_popup": "popup.html"
+  }
+}
