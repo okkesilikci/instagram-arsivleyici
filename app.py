@@ -98,7 +98,7 @@ def download():
         return jsonify({"error": "Fotoğraf listesi artık geçerli değil. Profili yeniden getir."}), 400
     selected.sort(key=lambda x: (x["date"], x["shortcode"], x["position"]))
     output = BytesIO()
-    counts = {}
+    sequence = 0
     try:
         with ZipFile(output, "w", ZIP_DEFLATED) as archive:
             session = requests.Session()
@@ -108,10 +108,10 @@ def download():
                 response.raise_for_status()
                 year, month, _ = item["date"][:10].split("-")
                 key = f"{month}_{year}"
-                counts[key] = counts.get(key, 0) + 1
+                sequence += 1
                 mime = response.headers.get("Content-Type", "").lower()
                 ext = "png" if "png" in mime else "webp" if "webp" in mime else "jpg"
-                archive.writestr(f"{key}_{counts[key]:03d}.{ext}", response.content)
+                archive.writestr(f"{key}_{sequence:03d}.{ext}", response.content)
         output.seek(0)
         return send_file(output, mimetype="application/zip", as_attachment=True,
                          download_name="instagram-arsiv.zip")
