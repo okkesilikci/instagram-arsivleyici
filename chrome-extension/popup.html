@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IG Arşivleyici</title><link rel="stylesheet" href="popup.css"></head>
+<body><main>
+<header><b>IG <span>Arşivleyici</span></b><small>Chrome eklentisi · İlk sürüm</small></header>
+<p class="hint">Instagram'da açık profil sayfasını aç. Eklenti, sayfada görüntülenen gönderi görsellerini toplar.</p>
+<button id="scan" class="primary">Profili tara ve eski gönderileri yükle</button>
+<div id="status" role="status">Instagram profil sekmesine geçip Tara'ya bas.</div>
+<div class="bar"><b id="count">0 fotoğraf</b><div><button id="all" class="light" disabled>Tümünü seç</button><button id="none" class="light" disabled>Temizle</button></div></div>
+<div id="items" class="items"><p class="empty">Henüz fotoğraf bulunmadı.</p></div>
+<button id="download" class="primary" disabled>Seçilenleri ZIP indir</button>
+<p class="foot">Not: Instagram'ın yüklediği içeriklerle sınırlıdır. Tarih bulunamazsa dosya adı “tarih-yok” olur. Carousel gönderilerinde ilk aşamada profil ızgarasında görünen kapak görseli alınır.</p>
+</main><script src="popup.js"></script></body></html>
