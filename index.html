@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Instagram Arşivleyici</title>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<style>
+:root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#202124;background:#f5f6f8}
+*{box-sizing:border-box}body{margin:0}.wrap{max-width:1120px;margin:auto;padding:38px 22px 70px}
+header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:30px}
+.brand{font-size:19px;font-weight:750;letter-spacing:-.5px}.brand span{color:#8b5cf6}
+.pill{font-size:12px;color:#5b46a5;background:#eee9ff;padding:7px 11px;border-radius:30px}
+h1{font-size:clamp(28px,5vw,42px);letter-spacing:-1.5px;margin:0 0 9px}
+.lead{color:#687080;line-height:1.6;margin:0 0 26px;max-width:690px}
+.panel{background:white;border:1px solid #e7e9ee;border-radius:17px;padding:22px;margin:16px 0;box-shadow:0 4px 18px #20212408}
+label{font-size:13px;font-weight:650;display:block;margin-bottom:8px}
+input[type=text],input[type=url],input[type=date]{width:100%;padding:12px 13px;border:1px solid #dfe2e8;border-radius:10px;font:inherit;outline:none}
+input:focus{border-color:#8b5cf6;box-shadow:0 0 0 3px #8b5cf61c}
+.row{display:flex;gap:12px;align-items:end}.grow{flex:1}
+button,.filebtn{border:0;border-radius:10px;padding:12px 16px;font-weight:650;font-size:14px;cursor:pointer;background:#24212d;color:white}
+button.secondary,.filebtn{background:#f0eef5;color:#332d40}.filebtn{display:inline-flex;align-items:center;gap:8px}
+button:disabled{opacity:.45;cursor:not-allowed}
+.note{font-size:12px;line-height:1.55;color:#747b89;margin:10px 0 0}
+.notice{background:#fff8e8;border:1px solid #f4e2b7;border-radius:12px;padding:13px 15px;color:#76551a;font-size:13px;line-height:1.55;margin-top:15px}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.stats{font-size:13px;color:#6c7280}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;margin-top:18px}
+.item{border:1px solid #e7e9ee;border-radius:13px;overflow:hidden;background:#fff}
+.thumb{aspect-ratio:1;background:#f0f1f4;position:relative}.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb input{position:absolute;top:10px;left:10px;width:19px;height:19px;accent-color:#7654d6}
+.meta{padding:11px}.filename{font-size:12px;font-weight:700;overflow-wrap:anywhere;margin-bottom:8px}
+.meta input{font-size:12px;padding:8px}
+.empty{padding:45px 20px;text-align:center;color:#8a909c;border:1px dashed #d9dce4;border-radius:13px;margin-top:18px}
+.empty strong{display:block;color:#4d5360;margin-bottom:7px}
+footer{font-size:12px;color:#9298a3;text-align:center;margin-top:35px}
+@media(max-width:600px){.wrap{padding:24px 14px 50px}.row{align-items:stretch;flex-direction:column}.row button{width:100%}.panel{padding:16px}}
+</style>
+</head>
+<body><main class="wrap">
+<header><div class="brand">IG <span>Arşivleyici</span></div><div class="pill">Yerel fotoğraf arşivi</div></header>
+<h1>Paylaşımlarını düzenli arşivle.</h1>
+<p class="lead">Fotoğrafları ekle, paylaşım tarihlerini kontrol et, istediklerini seç ve ay-yıl-sıra düzeninde ZIP olarak indir.</p>
+<section class="panel">
+<label for="profile">Instagram profil bağlantısı <span style="color:#9298a3;font-weight:400">(arşiv etiketi için)</span></label>
+<input id="profile" type="url" placeholder="https://www.instagram.com/hesapadi/">
+<p class="note">Profil bağlantısı şu an otomatik içerik çekmez; sadece arşiv kaydına eklenir. Instagram, herkese açık hesapların tüm gönderilerini dışarıdan topluca indirmek için genel ve garantili bir erişim sunmuyor.</p>
+<div class="notice"><b>İçerik ekleme:</b> Şimdilik fotoğrafları bilgisayarından seç. Her fotoğrafın paylaşım tarihini girerek doğru kronolojik arşivi oluşturabilirsin. Instagram'dan alınan veya indirme iznin olan görselleri kullan.</div>
+</section>
+<section class="panel">
+<div class="row">
+<div class="grow"><label for="files">Fotoğrafları ekle</label><input id="files" type="file" accept="image/*" multiple></div>
+<button class="secondary" id="clear" type="button">Listeyi temizle</button>
+</div>
+<p class="note">Birden fazla fotoğraf seçebilirsin. Çoklu fotoğraf gönderilerindeki görselleri de ayrı dosyalar olarak ekleyebilirsin.</p>
+</section>
+<section class="panel">
+<div class="toolbar">
+<div><b>Fotoğraf listesi</b><div class="stats" id="stats">Henüz fotoğraf eklenmedi</div></div>
+<div class="actions"><button class="secondary" id="selectAll" type="button">Tümünü seç</button><button class="secondary" id="selectNone" type="button">Seçimi kaldır</button><button id="download" type="button" disabled>Seçilenleri ZIP indir</button></div>
+</div>
+<div id="gallery" class="empty"><strong>Henüz arşivde fotoğraf yok</strong>Başlamak için yukarıdan fotoğraflarını seç.</div>
+</section>
+<footer>Fotoğraflar tarayıcında işlenir; bu prototip görselleri herhangi bir sunucuya yüklemez.</footer>
+</main>
+<script>
+const input=document.getElementById('files'),gallery=document.getElementById('gallery'),stats=document.getElementById('stats'),download=document.getElementById('download');
+let items=[],nextId=1;
+function pad(n){return String(n).padStart(2,'0')}
+function ordered(){return [...items].sort((a,b)=>(a.date||'9999-12-31').localeCompare(b.date||'9999-12-31')||a.id-b.id)}
+function render(){
+ const sorted=ordered();const selected=items.filter(x=>x.selected).length;
+ stats.textContent=items.length?items.length+' fotoğraf · '+selected+' seçili':'Henüz fotoğraf eklenmedi';
+ download.disabled=!selected||!window.JSZip;
+ if(!items.length){gallery.className='empty';gallery.innerHTML='<strong>Henüz arşivde fotoğraf yok</strong>Başlamak için yukarıdan fotoğraflarını seç.';return}
+ gallery.className='gallery';gallery.innerHTML='';
+ sorted.forEach((item,index)=>{
+  const card=document.createElement('article');card.className='item';
+  const thumb=document.createElement('div');thumb.className='thumb';
+  const img=document.createElement('img');img.src=item.url;img.alt=item.file.name;thumb.appendChild(img);
+  const check=document.createElement('input');check.type='checkbox';check.checked=item.selected;check.setAttribute('aria-label','Fotoğrafı seç');check.addEventListener('change',()=>{item.selected=check.checked;render()});thumb.appendChild(check);
+  const meta=document.createElement('div');meta.className='meta';
+  const name=document.createElement('div');name.className='filename';name.textContent=filename(item,index);meta.appendChild(name);
+  const date=document.createElement('input');date.type='date';date.value=item.date;date.title='Paylaşım tarihi';date.addEventListener('change',()=>{item.date=date.value;render()});meta.appendChild(date);
+  card.append(thumb,meta);gallery.appendChild(card);
+ });
+}
+function filename(item,index){if(!item.date)return 'Tarih girilmedi · '+String(index+1).padStart(3,'0')+'.jpg';const [y,m]=item.date.split('-');return m+'_'+y+'_'+String(index+1).padStart(3,'0')+'.'+(item.ext||'jpg')}
+input.addEventListener('change',e=>{
+ [...e.target.files].filter(f=>f.type.startsWith('image/')).forEach(file=>{const url=URL.createObjectURL(file);items.push({id:nextId++,file,url,date:'',selected:true,ext:(file.name.split('.').pop()||'jpg').toLowerCase()})});
+ input.value='';render();
+});
+document.getElementById('selectAll').onclick=()=>{items.forEach(x=>x.selected=true);render()};
+document.getElementById('selectNone').onclick=()=>{items.forEach(x=>x.selected=false);render()};
+document.getElementById('clear').onclick=()=>{items.forEach(x=>URL.revokeObjectURL(x.url));items=[];render()};
+download.onclick=async()=>{
+ const chosen=ordered().filter(x=>x.selected);if(!chosen.length)return;
+ if(chosen.some(x=>!x.date)){alert('Lütfen indirmeden önce tüm seçili fotoğrafların paylaşım tarihini gir.');return}
+ download.disabled=true;download.textContent='ZIP hazırlanıyor…';
+ try{
+  const zip=new JSZip();const counts={};
+  for(const item of chosen){const [y,m]=item.date.split('-');const key=m+'_'+y;counts[key]=(counts[key]||0)+1;const ext=item.ext;const name=key+'_'+String(counts[key]).padStart(3,'0')+'.'+ext;zip.file(name,item.file)}
+  const blob=await zip.generateAsync({type:'blob'});const a=document.createElement('a');const url=URL.createObjectURL(blob);a.href=url;a.download='instagram-arsiv.zip';a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);
+ }catch(err){alert('ZIP oluşturulamadı: '+err.message)}
+ download.textContent='Seçilenleri ZIP indir';render();
+};
+render();
+</script></body></html>
